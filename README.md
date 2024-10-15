@@ -1,7 +1,7 @@
 # Controlador de Cámara con ESP32
 Este proyecto tiene como objetivo el desarrollo de un sistema de control remoto para una cámara de filmación utilizando un ESP32. El sistema permite manejar dos servo motores y LEDs indicadores a través de una interfaz web, brindando una experiencia de usuario intuitiva y accesible desde dispositivos móviles.
 
-#Funcionalidades
+# Funcionalidades
 Control de Movimiento Horizontal: El primer servo motor está diseñado para mover la cámara de forma horizontal, permitiendo seguir el movimiento de una persona o sujeto en tiempo real.
 
 Control de Zoom: El segundo servo motor controla el zoom de la cámara, permitiendo ajustes de acercamiento según sea necesario.
