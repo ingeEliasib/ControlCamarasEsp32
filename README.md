@@ -8,9 +8,9 @@ Control de Zoom: El segundo servo motor controla el zoom de la cámara, permitie
 
 Interfaz Web: Los usuarios pueden interactuar con el sistema a través de una interfaz web, facilitando el control de los servos y la visualización del estado de los LEDs indicadores.
 
-#Tecnologías Utilizadas
+# Tecnologías Utilizadas
 ESP32: Microcontrolador con conectividad Wi-Fi y Bluetooth, ideal para aplicaciones IoT.
 HTML/CSS/JavaScript: Para el desarrollo de la interfaz web.
 Arduino: Plataforma de desarrollo utilizada para programar el ESP32.
-#Conclusión
+# Conclusión
 Este proyecto combina electrónica y programación para ofrecer una solución innovadora en el control de cámaras, demostrando el potencial del ESP32 en aplicaciones de automatización y control remoto. Invito a otros a explorar, colaborar y contribuir a este proyecto.
