@@ -1,8 +1,12 @@
+<!-- Esta versión del Index de momento solo es para
+poder controlar el led del ESP32 con intervención
+de Mysql y despues controlar los dos servomotores -->
+
 <?php
 $servername = "localhost";
-$dBUsername = "id18842182_electronoobs";
+$dBUsername = "UusarioBD";
 $dBPassword = "4(M(&g6!RjzK2c6{";
-$dBName = "id18842182_esp32";
+$dBName = "BD_esp32";
 
 // Crear conexión
 $conn = new mysqli($servername, $dBUsername, $dBPassword, $dBName);
@@ -14,19 +18,19 @@ if ($conn->connect_error) {
 
 // Manejar el toggling del LED
 if (isset($_POST['toggle_LED'])) {
-    $sql = "SELECT * FROM LED_status;";
+    $sql = "SELECT estado FROM controlcamaras;";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
     
-    if ($row['status'] == 0) {
-        $update = $conn->query("UPDATE LED_status SET status = 1 WHERE id = 1;");        
+    if ($row['estado'] == 0) {
+        $update = $conn->query("UPDATE controlcamaras SET estado = 1 WHERE idcamara = 1;");        
     } else {
-        $update = $conn->query("UPDATE LED_status SET status = 0 WHERE id = 1;");        
+        $update = $conn->query("UPDATE controlcamaras SET estado = 0 WHERE idcamara = 1;");        
     }
 }
 
 // Obtener el estado actual del LED
-$sql = "SELECT * FROM LED_status;";
+$sql = "SELECT estado FROM controlcamaras;";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 ?>
@@ -81,7 +85,7 @@ $row = $result->fetch_assoc();
     <div class="wrapper" id="refresh">
         <div class="col_3"></div>
         <div class="col_3">
-            <h1 style="text-align: center;">The status of the LED is: <?php echo $row['status']; ?></h1>
+            <h1 style="text-align: center;">El estado del led es: <?php echo $row['status']; ?></h1>
             <div class="col_3"></div>
             <div class="col_3" style="text-align: center;">
                 <form action="index.php" method="post" id="LED" enctype="multipart/form-data">			
