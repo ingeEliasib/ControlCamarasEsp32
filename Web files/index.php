@@ -4,7 +4,7 @@ de Mysql y despues controlar los dos servomotores -->
 
 <?php
 $servername = "localhost";
-$dBUsername = "UusarioBD";
+$dBUsername = "UsarioBD";
 $dBPassword = "4(M(&g6!RjzK2c6{";
 $dBName = "BD_esp32";
 
