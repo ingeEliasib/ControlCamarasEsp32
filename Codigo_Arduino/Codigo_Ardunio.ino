@@ -3,7 +3,7 @@
 #include <WiFi.h>
 
 // Add WIFI data
-const char* ssid = "Galaxy A03 5555";              // Tu nombre de red WIFI
+const char* ssid = "wifiprueba";              // Tu nombre de red WIFI
 const char* password = "123456789";                 // Tu contraseña WIFI
 WiFiServer server(80);
 
@@ -16,7 +16,7 @@ int refresh_time = 200;                             // Frecuencia de actualizaci
 
 // Entradas/salidas
 const int button1 = 0;                              // Pin del botón (G0)
-const int LED = 16;                                 // Pin del LED (G16)
+const int LED = 17;                                 // Pin del LED (G16)
 
 // Interrupción por presión del botón
 void IRAM_ATTR isr() {

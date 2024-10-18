@@ -4,9 +4,9 @@ de Mysql y despues controlar los dos servomotores -->
 
 <?php
 $servername = "localhost";
-$dBUsername = "UusarioBD";
+$dBUsername = "UsarioBD";
 $dBPassword = "4(M(&g6!RjzK2c6{";
-$dBName = "BD_esp32";
+$dBName = "bd_esp32";
 
 // Crear conexión
 $conn = new mysqli($servername, $dBUsername, $dBPassword, $dBName);
@@ -85,11 +85,11 @@ $row = $result->fetch_assoc();
     <div class="wrapper" id="refresh">
         <div class="col_3"></div>
         <div class="col_3">
-            <h1 style="text-align: center;">El estado del led es: <?php echo $row['status']; ?></h1>
+            <h1 style="text-align: center;">El estado del led es: <?php echo $row['estado']; ?></h1>
             <div class="col_3"></div>
-            <div class="col_3" style="text-align: center;">
+            <div class="col_3" style="text-align: left;">
                 <form action="index.php" method="post" id="LED" enctype="multipart/form-data">			
-                    <input id="submit_button" type="submit" name="toggle_LED" value="Toggle LED" />
+                    <input id="submit_button" type="submit" name="toggle_LED" value="Cambiar estado led" />
                 </form>
                 <script type="text/javascript">
                     $(document).ready(function () {
@@ -100,7 +100,7 @@ $row = $result->fetch_assoc();
                 </script>
                 <br><br>
                 <div class="led_img">
-                    <img id="contest_img" src="<?php echo $row['status'] == 0 ? 'led_off.png' : 'led_on.png'; ?>" width="100%" height="100%">
+                    <img id="contest_img" src="<?php echo $row['estado'] == 0 ? 'led_off.png' : 'led_on.png'; ?>" width="100%" height="70%">
                 </div>
             </div>
             <div class="col_3"></div>

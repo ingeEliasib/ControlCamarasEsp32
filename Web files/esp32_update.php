@@ -5,9 +5,9 @@ controlar los led que se encuentran en el Esp32
 despues controlar los Servo Motores
 */
 $servername = "localhost"; // o "127.0.0.1"
-$dBUsername = "id18842182_electronoobs"; // tu usuario
+$dBUsername = "UsarioBD"; // tu usuario
 $dBPassword = "4(M(&g6!RjzK2c6{"; // tu contraseña
-$dbname = "desarrollo"; // nombre de tu base de datos
+$dbname = "BD_esp32"; // nombre de tu base de datos
 
 // Crear conexión
 $conn = mysqli_connect($servername, $dBUsername, $dBPassword, $dbname);
