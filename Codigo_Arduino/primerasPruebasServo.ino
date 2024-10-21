@@ -5,6 +5,10 @@
 // Add WIFI data
 const char* ssid = "Radiotelevision";              // Tu nombre de red WIFI
 const char* password = "CasadeOracion2023";                 // Tu contraseña WIFI
+
+const char* ssid2 = "wifiprueba";              // Tu nombre de red WIFI
+const char* password2 = "123456789";                 // Tu contraseña WIFI
+
 WiFiServer server(80);
 
 // Variables utilizadas en el código
@@ -18,11 +22,12 @@ int refresh_time = 200;                             // Frecuencia de actualizaci
 const int button1 = 0;                              // Pin del botón (G0)
 const int LED = 17;
 //Variables para servo
+const int pinServoZoom=18;
 int backupAngulo = 0; 
 int nuevoAngulo = 0;
 int tiempo=150;                                
 
-int pinServoZoom=33;
+
 
 Servo myServo;
 Servo ServoZoom;
@@ -45,6 +50,10 @@ void connectWiFi() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print("Buscando Wifi ...");
+    Serial.print("Conectando a ");
+    Serial.println(ssid);
+    WiFi.begin(ssid2, password2);
+    delay(500);
   }
   
   Serial.println("");
@@ -60,11 +69,31 @@ void connectWiFi() {
 void MovimientoZoom() {
   Serial.println("MovimientoZoom llamado");
   digitalWrite(LED, HIGH);
-  ServoZoom.write(115);
-  delay(300);
-  ServoZoom.write(90);
-  delay(300);
-  ServoZoom.write(115);
+
+  // Mover de 0 a 180 grados
+  Serial.println(" inicio dos");
+  for (int pos = 0; pos <= 180; pos += 1) {
+    ServoZoom.write(pos);            // Mover el servo a la posición 'pos'
+    delay(15);                     // Esperar para que el servo llegue a la posición
+    
+  }
+
+  delay(1000);                     // Esperar 1 segundo en la posición 180
+  Serial.println("MovimientoZoom ");
+
+  // Mover de 180 a 0 grados
+  for (int pos = 180; pos >= 0; pos -= 1) {
+  ServoZoom.write(pos);            // Mover el servo a la posición 'pos'
+  delay(15);                     // Esperar para que el servo llegue a la posición
+
+  }
+
+  delay(1000);                     // Esperar 1 segundo en la posición 0
+    Serial.println("fin movi ");
+}
+void PararZoom() {
+    digitalWrite(LED, LOW);
+    ServoZoom.write(0); 
 }
 
 
@@ -79,12 +108,12 @@ void setup() {
   Actual_Millis = millis();                          // Guardar tiempo para el bucle de actualización
   Previous_Millis = Actual_Millis; 
 
-  //myServo.attach(pinServo, 500, 2500); pendiente configurar
+  //ServoZoom.attach(pinServo, 500, 2500); pendiente configurar
   ServoZoom.attach(pinServoZoom, 500, 2500);//Servo Zoom
   backupAngulo=0; 
   nuevoAngulo =0;
 
-  ServoZoom.write(90);
+  ServoZoom.write(0);
 }
 
 void loop() {  
@@ -108,7 +137,7 @@ void loop() {
       }
       
       // Comenzar nueva conexión al servidor       
-      http.begin("http://192.168.0.22/dashboard/camaras/Web%20files/esp32_update.php"); // URL correcta
+      http.begin("http://192.168.41.152/dashboard/camaras/Web%20files/esp32_update.php"); // URL correcta
  
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");         // Preparar encabezado
       
@@ -128,7 +157,8 @@ void loop() {
 
  
           if (response_body == "LED_is_off") {
-            digitalWrite(LED, LOW);
+           // digitalWrite(LED, LOW);
+           PararZoom();
           } 
           // Si los datos recibidos son LED_is_on, encender el LED
           else if (response_body == "LED_is_on") {

@@ -1,0 +1,3 @@
+http://DESKTOP-QM1EUKM/dashboard/camaras/Web%20files/index.php
+
+http://192.168.43.39/dashboard/camaras/Web%20files/index.php

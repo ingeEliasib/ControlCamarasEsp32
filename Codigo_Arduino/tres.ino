@@ -5,6 +5,13 @@
 // Add WIFI data
 const char* ssid = "Radiotelevision";              // Tu nombre de red WIFI
 const char* password = "CasadeOracion2023";                 // Tu contraseña WIFI
+
+const char* ssid2 = "Computer Master2";            
+const char* password2 = "Lobococinawafles";  
+
+const char* ssid3 = "Galaxy A03 5555";            
+const char* password3 = "123456789";   
+
 WiFiServer server(80);
 
 // Variables utilizadas en el código
@@ -18,11 +25,12 @@ int refresh_time = 200;                             // Frecuencia de actualizaci
 const int button1 = 0;                              // Pin del botón (G0)
 const int LED = 17;
 //Variables para servo
+const int pinServoZoom=18;
 int backupAngulo = 0; 
 int nuevoAngulo = 0;
 int tiempo=150;                                
 
-int pinServoZoom=33;
+
 
 Servo myServo;
 Servo ServoZoom;
@@ -39,12 +47,25 @@ void connectWiFi() {
   Serial.println();
   Serial.print("Conectando a ");
   Serial.println(ssid);
-  
   WiFi.begin(ssid, password);
+  delay(500);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print("Buscando Wifi ...");
+    Serial.print("Conectando a ");
+    Serial.println(ssid);
+    WiFi.begin(ssid2, password2);
+    delay(500);
+      while (WiFi.status() != WL_CONNECTED) {
+         delay(500);
+         Serial.print("Buscando Wifi ...");
+         Serial.print("Conectando a ");
+         Serial.println(ssid);
+         WiFi.begin(ssid3, password3);
+         delay(500);
+      }
+    delay(500);
   }
   
   Serial.println("");
@@ -58,17 +79,22 @@ void connectWiFi() {
 * Funciones Manejo de Zoom
 ****************************************************/
 void MovimientoZoom() {
-  Serial.println("MovimientoZoom llamado");
+  Serial.println("Encender led");
   digitalWrite(LED, HIGH);
-  ServoZoom.write(115);
-  delay(300);
-  ServoZoom.write(90);
-  delay(300);
-  ServoZoom.write(115);
+   Serial.println("Mover Servo  90");
+   ServoZoom.write(90); 
+  Serial.println("Fin moviviento y encendido ");
 }
 
+void PararZoom() {
+    Serial.println("apagar led y parar servo");
+    digitalWrite(LED, LOW);
+    ServoZoom.write(0); 
+}
 
+//***********************************************
 void setup() {
+
   delay(10);
   Serial.begin(115200);                             // Iniciar monitor
   pinMode(LED, OUTPUT);                             // Configurar pin del LED como salida
@@ -79,12 +105,12 @@ void setup() {
   Actual_Millis = millis();                          // Guardar tiempo para el bucle de actualización
   Previous_Millis = Actual_Millis; 
 
-  //myServo.attach(pinServo, 500, 2500); pendiente configurar
+  //ServoZoom.attach(pinServo, 500, 2500); pendiente configurar
   ServoZoom.attach(pinServoZoom, 500, 2500);//Servo Zoom
   backupAngulo=0; 
   nuevoAngulo =0;
 
-  ServoZoom.write(90);
+  //ServoZoom.write(0);
 }
 
 void loop() {  
@@ -108,7 +134,8 @@ void loop() {
       }
       
       // Comenzar nueva conexión al servidor       
-      http.begin("http://192.168.0.22/dashboard/camaras/Web%20files/esp32_update.php"); // URL correcta
+      //http.begin("http://192.168.43.39/dashboard/camaras/Web%20files/esp32_update.php"); // URL correcta
+      http.begin("http://DESKTOP-QM1EUKM/dashboard/camaras/Web%20files/esp32_update.php"); // URL correcta
  
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");         // Preparar encabezado
       
@@ -129,12 +156,45 @@ void loop() {
  
           if (response_body == "LED_is_off") {
             digitalWrite(LED, LOW);
+          // PararZoom();
           } 
           // Si los datos recibidos son LED_is_on, encender el LED
           else if (response_body == "LED_is_on") {
-      
-            MovimientoZoom();
+            digitalWrite(LED, HIGH);
+            //MovimientoZoom();
           }  
+
+
+          // Consultar estado del Servo Zoom
+          http.begin("http://DESKTOP-QM1EUK/dashboard/camaras/Web%20files/esp32_update.php");
+          http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+          response_code = http.POST("check_SERVOZOOM_status"); // Consultar estado del servo
+
+          if (response_code > 0 && response_code == 200) {
+              String servo_response = http.getString();
+              Serial.print("Estado del Servo Zoom: ");
+              Serial.println(servo_response);
+
+          // Mover el servo según el estado
+          if (servo_response == "1") {
+              Serial.println("Moviendo Servo a 0 grados");
+              ServoZoom.write(0);
+          } else if (servo_response == "2") {
+              Serial.println("Moviendo Servo a 90 grados");
+              ServoZoom.write(90);
+          }
+
+          // Actualizar la base de datos para poner el servo en espera
+          http.begin("http://DESKTOP-QM1EUK/dashboard/camaras/Web%20files/esp32_update.php");
+          http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+          response_code = http.POST("Poner_Espera_ServoZoom");
+          
+          if (response_code > 0) {
+              Serial.println("Estado del servo actualizado en la base de datos.");
+          } else {
+              Serial.println("Error al actualizar estado del servo en la base de datos.");
+          }
+        }
         } // Fin de response_code = 200
       } // FIN de response_code > 0
       else {
