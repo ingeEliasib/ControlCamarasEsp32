@@ -6,7 +6,7 @@ de Mysql y despues controlar los dos servomotores -->
 $servername = "localhost";
 $dBUsername = "UsarioBD";
 $dBPassword = "4(M(&g6!RjzK2c6{";
-$dBName = "BD_esp32";
+$dBName = "bd_esp32";
 
 // Crear conexión
 $conn = new mysqli($servername, $dBUsername, $dBPassword, $dBName);
