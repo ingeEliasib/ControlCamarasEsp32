@@ -1,15 +1,17 @@
 # 📷 Controlador de Cámara con ESP32 y Servo Motor 🚀
 
-Este proyecto permite controlar una cámara montada en servomotores utilizando el microcontrolador ESP32 y una placa Arduino, con la capacidad de gestionarla remotamente a través de una interfaz web. El servidor corre en PHP, ofreciendo una solución intuitiva y accesible desde dispositivos móviles para control remoto en tiempo real.
+Este proyecto permite controlar una cámara de filmación montada en un trípode convencional, el cual se modifica lo mínimo posible para adaptarle dos servomotores: uno para realizar el zoom y otro para el movimiento horizontal. Para su funcionalidad, se utiliza un microcontrolador ESP32 o una placa Arduino con un módulo WiFi (ya se han realizado pruebas con un módulo Bluetooth, que resultó ineficiente en distancias largas). Las tarjetas deben tener la capacidad de gestionarse remotamente a través de una interfaz web y una aplicación disponible en Play Store. El servidor se ejecuta en PHP, ofreciendo una solución intuitiva y accesible desde dispositivos móviles para el control remoto en tiempo real.
 
 ## 🌟 Características Principales
 
-- 🎯 Control de Movimiento Horizontal: El servo motor 1 permite mover la cámara horizontalmente para seguir un objeto o sujeto.
-- 🔍 Control de Zoom: El servo motor 2 ajusta el zoom de la cámara según sea necesario.
-- 🌐 Interfaz Web Interactiva: Control de los servomotores y LEDs indicadores desde un sitio web simple y responsivo.
-- 💡 Indicadores LED: Permiten conocer el estado del sistema de manera visual.
+- 🎯 Control de Movimiento Horizontal: El servomotor 1 permite mover la cámara horizontalmente para seguir a un objeto o sujeto.
+- 🔍 Control de Zoom: El servomotor 2 ajusta el zoom de la cámara según sea necesario.
+- 🌐 Interfaz Web Interactiva: Control de los servomotores y de los LEDs indicadores desde un sitio web simple y responsivo.
+- 💡 Indicadores LED: Muestran el estado del sistema de manera visual.
+- 📺 Display: Encargado de informar sobre lo que ocurre en el módulo.
+- 📱 Aplicación: App que permite integrar el cambio de escena y los controles de la cámara
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Soluciones Utilizadas
 
 - ESP32: Microcontrolador con conectividad Wi-Fi/Bluetooth, perfecto para IoT.
 - PHP: Servidor backend que facilita la comunicación entre la web y el ESP32.
@@ -66,6 +68,9 @@ Controla el movimiento de la cámara y los indicadores LED en tiempo real.
 
 ## 💡 Posibles Mejoras Futuras
 
+Integracion de una camara para seguimiento de objetivos.
+Integración de sensores en la persona para seguimiento no visual.
+Integracion con sensores en el suelo del lugar de transision.
 Integración de una cámara IP para transmitir vídeo en tiempo real.
 Implementación de control a través de comandos de voz.
 Añadir más opciones de automatización utilizando IA.
