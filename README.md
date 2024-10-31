@@ -41,6 +41,7 @@ ESP32 -->|Control| Servo1((Servo Motor Horizontal))
 ESP32 -->|Control| Servo2((Servo Motor Zoom))
 ESP32 -->|Indicador| LED1((LED Rojo))
 ESP32 -->|Indicador| LED2((LED Verde))
+ESP32 -->|Display| Display((Mostrar Información))
 ESP32 -->|Alimentación| FuenteDePoder(Alimentación)
 ```
 
