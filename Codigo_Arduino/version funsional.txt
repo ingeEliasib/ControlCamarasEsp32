@@ -12,17 +12,21 @@ int refresh_time = 1000;                  // Frecuencia de actualización (más 
 
 // Entradas/salidas
 const int button1 = 0;                   // Pin del botón (G0)
-const int LED = 17;                      // Pin del LED
+const int LED = 32;                      // Pin del LED
 
 // Variables para servo
-const int pinServoZoom = 18;             // Pin del servo de zoom
+const int pinServoZoom = 25;             // Pin del servo de zoom
 Servo ServoZoom;                         // Objeto del servo
 
-const String URLHPLINK = "http://192.168.118.178/dashboard/camaras/Web%20files/esp32_update.php";
+//const String URLHPLINK = "http://192.168.118.178/dashboard/camaras/Web%20files/esp32_update.php";
+const String URLHPLINK = "http://192.168.246.178/dashboard/camaras/Web%20files/esp32_update.php";
 
-const char* ssid = "wifiprueba";              // Tu nombre de red WIFI
-const char* password = "123456789";                 // Tu contraseña WIFI
+//const char* ssid = "wifiprueba";
+const char* ssid = "EquipoRadioTvPiso1";              
+const char* password = "CasadeOracion2023";                 // Tu contraseña WIFI
 
+const char* ssid2 = "radiotelevisio";              
+const char* password2 = "CasadeOracion2023";                 // Tu contraseña WIFI
 
 WiFiServer server(80);
 
@@ -36,17 +40,22 @@ void IRAM_ATTR isr() {
 ****************************************************/
 void connectWiFi() {
   Serial.println();
-  Serial.print("Conectando a ");
+  Serial.println("Conectando a ");
   Serial.println(ssid);
   
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print("Buscando Wifi ...");
-    Serial.print("Conectando a ");
-    Serial.println(ssid);
-    WiFi.begin(ssid, password);
+    Serial.println("Buscando Wifi ...");
+    Serial.println("Conectando a ");
+    Serial.println(ssid2);
+    WiFi.begin(ssid2, password2);
+    if(WiFi.status() != WL_CONNECTED){
+        delay(500);
+        Serial.println(ssid);
+        WiFi.begin(ssid, password);
+    }
     delay(500);
   }
   
@@ -61,13 +70,30 @@ void connectWiFi() {
 /***************************************************
 * Funciones Manejo de Zoom
 ***************************************************/
-void MovimientoZoom() {
-  Serial.println("Encender led");
-  digitalWrite(LED, HIGH);
-  Serial.println("Mover Servo a 90 grados");
-  ServoZoom.write(90); 
-  Serial.println("Fin movimiento y encendido");
+void MovimientoServoZoom(String valor) {
+  if (valor == "1") {
+    Serial.println("Moviendo servo a 115 grados");
+    digitalWrite(LED, HIGH);
+    ServoZoom.write(115);
+    delay(300);
+    ServoZoom.write(90);
+    digitalWrite(LED, LOW);
+    Serial.println("Fin movimiento");
+  } else if (valor == "2") {
+    Serial.println("Moviendo servo a 55 grados");
+    digitalWrite(LED, HIGH);
+    ServoZoom.write(55);
+    delay(300);
+    ServoZoom.write(90);
+    digitalWrite(LED, LOW);
+    Serial.println("Fin movimiento");
+  } else if (valor == "0") {
+    Serial.println("Zoom en reposo");
+  }else {
+    Serial.println("Valor no válido");
+  }
 }
+
 
 void PararZoom() {
   Serial.println("Apagar led y parar servo");
@@ -141,16 +167,19 @@ void loop() {
             String servo_response = http.getString();
             Serial.print("Estado del Servo Zoom: ");
             Serial.println(servo_response);
-
+            MovimientoServoZoom(servo_response);//mover servo y poner en 0
+            int response_code = http.POST("Poner_Espera_ServoZoom");  // poner servo en 0 en bd
             // Mover el servo según el estado
-            if (servo_response == "1" or servo_response == "0") {
-              Serial.println("Moviendo Servo a 0 grados");
-              ServoZoom.write(0);
-            } else if (servo_response == "2") {
-              Serial.println("Moviendo Servo a 90 grados");
-              ServoZoom.write(90);
-               delay(500);
-            }
+            // if (servo_response == "1" ) {
+            //   // Serial.println("Moviendo Servo a 0 grados");
+            //   // ServoZoom.write(0);
+            // } else if (servo_response == "2") {
+            //   Serial.println("Moviendo Servo a 90 grados");
+            //   ServoZoom.write(90);
+            //   delay(500);
+            //   data_to_send = "Poner_Espera_ServoZoom"; 
+            //   int response_code = http.POST(data_to_send);  // Enviar POST
+            // }
   
           }
         } else {

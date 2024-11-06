@@ -70,11 +70,32 @@ if (isset($_POST['Mover_ServoZoom']) && isset($_POST['nuevo_estado'])) {
 }
 
 if (isset($_POST['Poner_Espera_ServoZoom']) ) {
-    
     $update = $conn->query("UPDATE servomotores SET Estado = 0 WHERE  NobreServoMotor = 'ServoZoom';");
-
-  
 }
+#******** Gestion de servo horizontal *************
+if (isset($_POST['check_SerMovHorizontal_status'])) {
+    $sql = "SELECT Estado FROM `servomotores` WHERE `NobreServoMotor`='ServoMovHorizontal';"; 
+    $result = mysqli_query($conn, $sql);
 
+    if (!$result) {
+        // Si hay un error en la consulta
+        echo "Error en la consulta: " . mysqli_error($conn);
+    } else {
+        $row = mysqli_fetch_assoc($result);
+        if ($row) {
+            echo $row['Estado']; // Retorna el estado encontrado
+        } else {
+            echo "No se encontró el estado."; // Maneja caso sin resultados
+        }
+    }
+}
+if(isset($_POST['Mover_ServoHorizontal']) && isset($_POST['Nuevo_Movimiento'])){
+    $nuevoEstado = intval($_POST['Nuevo_Movimiento']);
+    $update = $conn->query("UPDATE servomotores SET Estado = $nuevoEstado WHERE  NobreServoMotor = 'ServoMovHorizontal';");
+    if ($update) {
+       echo "" . $nuevoEstado;
+    }
+}
+#***************************************
 mysqli_close($conn);
 ?>
