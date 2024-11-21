@@ -44,6 +44,58 @@ if (isset($_POST['toggle_LED'])) {
         echo "LED_is_off";
     }
 }
+// Consultar el estado actual del Servo Zoom
+if (isset($_POST['check_SERVOZOOM_status'])) {
+    $sql = "SELECT Estado FROM servomotores WHERE  NobreServoMotor = 'ServoZoom';";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    
+    if ($row['Estado'] == 0) {
+        echo "0";
+    } else if ($row['Estado'] == 1){
+        echo "1";
+    }else if ($row['Estado'] == 2){
+        echo "2";
+    }
+}
 
+if (isset($_POST['Mover_ServoZoom']) && isset($_POST['nuevo_estado'])) {
+    $nuevoEstado = intval($_POST['nuevo_estado']);
+    $update = $conn->query("UPDATE servomotores SET Estado = $nuevoEstado WHERE  NobreServoMotor = 'ServoZoom';");
+
+    if ($update) {
+       echo "" . $nuevoEstado;
+    
+    }
+}
+
+if (isset($_POST['Poner_Espera_ServoZoom']) ) {
+    $update = $conn->query("UPDATE servomotores SET Estado = 0 WHERE  NobreServoMotor = 'ServoZoom';");
+}
+#******** Gestion de servo horizontal *************
+if (isset($_POST['check_SerMovHorizontal_status'])) {
+    $sql = "SELECT Estado FROM `servomotores` WHERE `NobreServoMotor`='ServoMovHorizontal';"; 
+    $result = mysqli_query($conn, $sql);
+
+    if (!$result) {
+        // Si hay un error en la consulta
+        echo "Error en la consulta: " . mysqli_error($conn);
+    } else {
+        $row = mysqli_fetch_assoc($result);
+        if ($row) {
+            echo $row['Estado']; // Retorna el estado encontrado
+        } else {
+            echo "No se encontró el estado."; // Maneja caso sin resultados
+        }
+    }
+}
+if(isset($_POST['Mover_ServoHorizontal']) && isset($_POST['Nuevo_Movimiento'])){
+    $nuevoEstado = intval($_POST['Nuevo_Movimiento']);
+    $update = $conn->query("UPDATE servomotores SET Estado = $nuevoEstado WHERE  NobreServoMotor = 'ServoMovHorizontal';");
+    if ($update) {
+       echo "" . $nuevoEstado;
+    }
+}
+#***************************************
 mysqli_close($conn);
 ?>

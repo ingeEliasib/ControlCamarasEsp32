@@ -1,14 +1,14 @@
 // Include libraries
 #include <HTTPClient.h>
 #include <WiFi.h>
-
+#include <ESP32Servo.h>
 // Add WIFI data
-const char* ssid = "Galaxy A03 5555";              // Tu nombre de red WIFI
-const char* password = "123456789";                 // Tu contraseña WIFI
+const char* ssid = "Radiotelevision";              // Tu nombre de red WIFI
+const char* password = "CasadeOracion2023";                 // Tu contraseña WIFI
 WiFiServer server(80);
 
 // Variables utilizadas en el código
-String LED_id = "1";                                // Para controlar el LED
+String idcamara = "1";                                // Para controlar el LED
 bool toggle_pressed = false;                         // Indica si se presiona el botón
 String data_to_send = "";                           // Datos a enviar al servidor
 unsigned int Actual_Millis, Previous_Millis;
@@ -16,13 +16,22 @@ int refresh_time = 200;                             // Frecuencia de actualizaci
 
 // Entradas/salidas
 const int button1 = 0;                              // Pin del botón (G0)
-const int LED = 16;                                 // Pin del LED (G16)
+const int LED = 17;
+//Variables para servo
+int backupAngulo = 0; 
+int nuevoAngulo = 0;
+int tiempo=150;                                
 
-// Interrupción por presión del botón
+int pinServoZoom=33;
+
+Servo myServo;
+Servo ServoZoom;
+
+// presión del botón
 void IRAM_ATTR isr() {
   toggle_pressed = true; 
+  Serial.println("Botón presionado");
 }
-
 /***************************************************
 * Connecting to a WiFi network
 ****************************************************/
@@ -45,6 +54,19 @@ void connectWiFi() {
   
   server.begin();  // Iniciar el servidor
 }
+/***************************************************
+* Funciones Manejo de Zoom
+****************************************************/
+void MovimientoZoom() {
+  Serial.println("MovimientoZoom llamado");
+  digitalWrite(LED, HIGH);
+  ServoZoom.write(115);
+  delay(300);
+  ServoZoom.write(90);
+  delay(300);
+  ServoZoom.write(115);
+}
+
 
 void setup() {
   delay(10);
@@ -56,6 +78,13 @@ void setup() {
   connectWiFi();                                    // Conectar a la red WiFi
   Actual_Millis = millis();                          // Guardar tiempo para el bucle de actualización
   Previous_Millis = Actual_Millis; 
+
+  //myServo.attach(pinServo, 500, 2500); pendiente configurar
+  ServoZoom.attach(pinServoZoom, 500, 2500);//Servo Zoom
+  backupAngulo=0; 
+  nuevoAngulo =0;
+
+  ServoZoom.write(90);
 }
 
 void loop() {  
@@ -70,33 +99,41 @@ void loop() {
       
       // Preparar datos a enviar
       if (toggle_pressed) {                           // Si se presionó el botón
-        data_to_send = "toggle_LED=" + LED_id;  
+      //  data_to_send = "toggle_LED=" + idcamara;  
+        data_to_send = "toggle_LED";
         toggle_pressed = false;                       // Reiniciar la variable
       } else {
-        data_to_send = "check_LED_status=" + LED_id; // Si no, consultar el estado
+       // data_to_send = "check_LED_status=" + idcamara; // Si no, consultar el estado
+       data_to_send = "check_LED_status";
       }
       
       // Comenzar nueva conexión al servidor       
-      http.begin("http://192.168.161.129/dashboard/Proyecto_camara/esp32_update.php"); // URL correcta
+      http.begin("http://192.168.0.22/dashboard/camaras/Web%20files/esp32_update.php"); // URL correcta
+ 
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");         // Preparar encabezado
       
       int response_code = http.POST(data_to_send);                                // Enviar POST
       // Si el código es mayor que 0, significa que recibimos respuesta
       if (response_code > 0) {
-        Serial.println("Código HTTP " + String(response_code));                   // Imprimir código de retorno
-  
+        if (response_code == 200) { 
+          Serial.println("Código HTTP " + String(response_code) + "todo ok"); 
+        }else{
+            Serial.println("Código HTTP " + String(response_code));   
+        }
+                       
         if (response_code == 200) {                                               // Si el código es 200, buena respuesta
           String response_body = http.getString();                                // Guardar respuesta del servidor
           Serial.print("Respuesta del servidor: ");                               // Imprimir respuesta para depuración
           Serial.println(response_body);
 
-          // Si los datos recibidos son LED_is_off, apagar el LED
+ 
           if (response_body == "LED_is_off") {
             digitalWrite(LED, LOW);
           } 
           // Si los datos recibidos son LED_is_on, encender el LED
           else if (response_body == "LED_is_on") {
-            digitalWrite(LED, HIGH);
+      
+            MovimientoZoom();
           }  
         } // Fin de response_code = 200
       } // FIN de response_code > 0
